@@ -47,8 +47,8 @@ class FuXi_S2S(Model):
 
         self.ordering = [
             f"{param}{level}"
-            for level in self.param_level_pl[1]
             for param in self.param_level_pl[0]
+            for level in self.param_level_pl[1]
         ] + self.param_sfc
 
         if isinstance(self.member_number, str):
