@@ -10,8 +10,6 @@ import os
 import numpy as np
 import onnxruntime as ort
 from ai_models.model import Model
-import pandas as pd
-import xarray as xr
 from copy import deepcopy
 
 LOG = logging.getLogger(__name__)
