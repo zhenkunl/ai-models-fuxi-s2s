@@ -96,14 +96,7 @@ class FuXi_S2S(Model):
         options.enable_cpu_mem_arena=False
         options.enable_mem_pattern = False
         options.enable_mem_reuse = False
-
-        # if self.device == "cuda":
-        #     providers = [('CUDAExecutionProvider', {'arena_extend_strategy':'kSameAsRequested'})]
-        # elif self.device == "cpu":
-        #     providers=['CPUExecutionProvider']
-        #     options.intra_op_num_threads = 24
-        # else:
-        #     raise ValueError("device must be cpu or cuda!")
+        options.intra_op_num_threads = self.num_threads
 
         model_file = os.path.join(self.assets, self.download_files[0])
 
@@ -144,7 +137,6 @@ class FuXi_S2S(Model):
                     inputs['step'] = np.array([i], dtype=np.float32)
                     new_input, = model.run(None, inputs)
                     output = deepcopy(new_input[:, -1:])
-                    # breakpoint()
 
                     for k, fs in enumerate(self.template):
                         self.write(
