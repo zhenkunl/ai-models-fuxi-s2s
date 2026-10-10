@@ -81,6 +81,12 @@ class FuXi_S2S(Model):
         fields_sfc = fields_sfc.order_by('valid_datetime', param=self.param_sfc)
         fields_sfc_numpy = fields_sfc.to_numpy(dtype=np.float32)
         fields_sfc_numpy1, fields_sfc_numpy2 = np.split(fields_sfc_numpy, 2, axis=0)
+        # scaled ×1000 from ERA5 J m**-2 to W m**-2 for ttr
+        fields_sfc_numpy1[3] = fields_sfc_numpy1[3] / 3600
+        fields_sfc_numpy2[3] = fields_sfc_numpy2[3] / 3600
+        # scaled ×1000 from ERA5 m to mm for tp
+        fields_sfc_numpy1[10] = np.clip(fields_sfc_numpy1[10] * 1000, 0, 1000)
+        fields_sfc_numpy2[10] = np.clip(fields_sfc_numpy2[10] * 1000, 0, 1000)
 
         prev = np.concatenate([fields_pl_numpy1, fields_sfc_numpy1], axis=0)
         curr = np.concatenate([fields_pl_numpy2, fields_sfc_numpy2], axis=0)
@@ -137,6 +143,10 @@ class FuXi_S2S(Model):
                     inputs['step'] = np.array([i], dtype=np.float32)
                     new_input, = model.run(None, inputs)
                     output = deepcopy(new_input[:, -1:])
+
+                    # Convert back to J m**-2
+                    output[0, 0, 68, ...] = output[0, 0, 68, ...] * 3600
+                    output[0, 0, 75, ...] = output[0, 0, 75, ...] / 1000
 
                     for k, fs in enumerate(self.template):
                         self.write(
