@@ -79,7 +79,7 @@ class FuXi_S2S(Model):
         fields_sfc = fields_sfc.order_by('valid_datetime', param=self.param_sfc)
         fields_sfc_numpy = fields_sfc.to_numpy(dtype=np.float32)
         fields_sfc_numpy1, fields_sfc_numpy2 = np.split(fields_sfc_numpy, 2, axis=0)
-        # scaled ×1000 from ERA5 J m**-2 to W m**-2 for ttr
+        # convert from ERA5 J m**-2 to W m**-2 for ttr
         fields_sfc_numpy1[3] = fields_sfc_numpy1[3] / 3600
         fields_sfc_numpy2[3] = fields_sfc_numpy2[3] / 3600
         # scaled ×1000 from ERA5 m to mm for tp
@@ -144,6 +144,7 @@ class FuXi_S2S(Model):
 
                     # Convert back to J m**-2
                     output[0, 0, 68, ...] = output[0, 0, 68, ...] * 3600
+                    # Convert back to m
                     output[0, 0, 75, ...] = output[0, 0, 75, ...] / 1000
 
                     for k, fs in enumerate(self.template):
